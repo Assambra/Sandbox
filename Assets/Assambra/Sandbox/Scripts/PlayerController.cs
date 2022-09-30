@@ -30,11 +30,14 @@ public class PlayerController : MonoBehaviour
         //We want to rotated the character with mouse input if right mouse button pressed
         if (Input.GetMouseButton(1))
         {
-            mouseX += Input.GetAxis("Mouse Y") * rotationSpeed * mouseRotateSpeedFactor * Time.deltaTime;
             mouseX += Input.GetAxis("Mouse X") * rotationSpeed * mouseRotateSpeedFactor * Time.deltaTime;
-
-            transform.localRotation = Quaternion.Euler(-mouseY, mouseX, 0);
+            
+            // Rotate the Character with Mouse
+            transform.localRotation = Quaternion.Euler(0, mouseX, 0);
+            
+            // Move the character
             transform.Translate(move * moveSpeed * runSpeedFactor * Time.deltaTime);
+
         }
         // rotate with Keys and block moving x
         else
