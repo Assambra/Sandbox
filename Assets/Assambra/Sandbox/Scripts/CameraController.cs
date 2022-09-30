@@ -58,9 +58,10 @@ public class CameraController : MonoBehaviour
                 Debug.LogError("No Player with Tag Player found");
         }
         
-
         mainCamera.transform.position = Vector3.zero;
         mainCamera.transform.rotation = Quaternion.identity;
+
+        gameObject.transform.rotation = player.transform.rotation;
 
         cameraDistance = cameraStartDistance;
     }
