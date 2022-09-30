@@ -1,12 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public Entity playerPrefab = null;
-    public GameObject spawnPointPlayer = null;
+    [Header("Serialize Fields Player")]
+    [SerializeField] private Entity playerPrefab = null;
+    [SerializeField] private GameObject spawnPointPlayer = null;
 
+    [Header("Serialize Fields Enemy")]
+    [SerializeField] private Entity enemyPrefab = null;
+    [SerializeField] private GameObject spawnPointEnemy = null;
+    
     private void Awake()
     {
         if (playerPrefab != null)
@@ -21,17 +24,20 @@ public class GameManager : MonoBehaviour
                 Debug.LogError("You need to add a Player Spawn Point!");
         }
         else
-            Debug.LogError("You need to add a Player Prefab!");   
-    }
+            Debug.LogError("You need to add a Player Prefab!");
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
+        if (enemyPrefab != null)
+        {
+            if (spawnPointEnemy)
+            {
+                GameObject go = enemyPrefab.gameObject;
+                Instantiate(go, spawnPointEnemy.transform.position, spawnPointEnemy.transform.rotation);
+                Debug.Log("Enemy spawned");
+            }
+            else
+                Debug.LogError("You need to add a Enemy Spawn Point!");
+        }
+        else
+            Debug.LogError("You need to add a Enemy Prefab!");
     }
 }
