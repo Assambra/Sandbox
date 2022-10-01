@@ -75,7 +75,7 @@ public class CameraController : MonoBehaviour
         cameraDistance = Mathf.Clamp(cameraDistance, cameraMinDistance, cameraMaxDistance);
 
 
-        if ((Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0))
         {
             cameraPan += mouseX;
             cameraTilt += mouseY;
