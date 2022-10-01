@@ -27,9 +27,6 @@ public class CameraController : MonoBehaviour
     private float cameraTilt = 0f;
     private float cameraPan = 0f;
 
-    private bool isOverUIElement = false;
-    private bool lastStateIsOverUIElement = false;
-
     private bool setFirstTimePlayerRotation = false;
 
     //Todo update to the new Unity Input System
@@ -78,7 +75,7 @@ public class CameraController : MonoBehaviour
         cameraDistance = Mathf.Clamp(cameraDistance, cameraMinDistance, cameraMaxDistance);
 
 
-        if ((Input.GetMouseButton(0) && !isOverUIElement) || lastStateIsOverUIElement)
+        if ((Input.GetMouseButton(0))
         {
             cameraPan += mouseX;
             cameraTilt += mouseY;
@@ -93,12 +90,7 @@ public class CameraController : MonoBehaviour
             
             cameraTilt = Mathf.Clamp(cameraTilt, cameraTiltMin, cameraTiltMax);
             transform.localEulerAngles = new Vector3(-cameraTilt, cameraPan, 0);
-
-            lastStateIsOverUIElement = true;
         }
-
-        if(!Input.GetMouseButton(0))
-            lastStateIsOverUIElement = false;
 
         if (Input.GetMouseButton(1))
         {
