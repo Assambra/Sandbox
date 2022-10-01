@@ -234,7 +234,6 @@ MonoBehaviour:
   rotationSpeed: 150
   mouseRotateSpeedFactor: 2
   mouseX: 0
-  mouseY: 0
 --- !u!114 &-5383585634645454109
 MonoBehaviour:
   m_ObjectHideFlags: 0

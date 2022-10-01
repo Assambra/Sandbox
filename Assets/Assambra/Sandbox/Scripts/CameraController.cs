@@ -30,6 +30,7 @@ public class CameraController : MonoBehaviour
     private bool isOverUIElement = false;
     private bool lastStateIsOverUIElement = false;
 
+    private bool setFirstTimePlayerRotation = false;
 
     //Todo update to the new Unity Input System
 
@@ -82,8 +83,17 @@ public class CameraController : MonoBehaviour
             cameraPan += mouseX;
             cameraTilt += mouseY;
 
+            // Needed if Player Spawn Rotation Y is not 0 then
+            // first mouse left click turns the camera to (0,0,0) look direction
+            if (!setFirstTimePlayerRotation)
+            {
+                cameraPan = player.transform.localEulerAngles.y;
+                setFirstTimePlayerRotation = true;
+            }
+            
             cameraTilt = Mathf.Clamp(cameraTilt, cameraTiltMin, cameraTiltMax);
             transform.localEulerAngles = new Vector3(-cameraTilt, cameraPan, 0);
+
             lastStateIsOverUIElement = true;
         }
 
@@ -94,7 +104,7 @@ public class CameraController : MonoBehaviour
         {
             cameraTilt += mouseY;
             cameraTilt = Mathf.Clamp(cameraTilt, cameraTiltMin, cameraTiltMax);
-            transform.localEulerAngles = new Vector3(-cameraTilt, 0, 0);
+            transform.localEulerAngles = new Vector3(-cameraTilt, transform.localEulerAngles.y, 0);
         }
 
         // Todo if the character rotates the camera should rotate with the character
