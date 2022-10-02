@@ -183,6 +183,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8802ed5660a80148857606ae1b97440, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MouseX: 0
+  MouseY: 0
   mainCamera: {fileID: 0}
   player: {fileID: 0}
   CameraOffset: {x: 0, y: 1.8, z: 0}
@@ -190,8 +192,8 @@ MonoBehaviour:
   cameraMinDistance: 0
   cameraMaxDistance: 35
   mouseWheelSensitivity: 10
-  mouseSensitivityX: 9
-  mouseSensitivityY: 9
+  cameraPanSpeed: 9
+  cameraTiltSpeed: 9
   cameraTiltMin: -80
   cameraTiltMax: 35
 --- !u!4 &222126243

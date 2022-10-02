@@ -1,35 +1,39 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    [Header("Public")]
+    public float MouseX = 0f;
+    public float MouseY = 0f;
+
+    [Header("Serialize fields")]
     [SerializeField] private Camera mainCamera = null;
     [SerializeField] private Player player = null;
 
+    [Header("Camera offset")]
     [SerializeField] private Vector3 CameraOffset = new Vector3(0f, 1.8f, 0f);
-    [SerializeField] private float cameraStartDistance = 5f;
     
+    [Header("Camera distance")]
+    [SerializeField] private float cameraStartDistance = 5f;
     [SerializeField] float cameraMinDistance = 0f;
     [SerializeField] float cameraMaxDistance = 35f;
     [SerializeField] private float mouseWheelSensitivity = 10f;
-    
-    [SerializeField] private float mouseSensitivityX = 9f;
-    [SerializeField] private float mouseSensitivityY = 9f;
+
+    [Header("Camera pan and tilt")]
+    [SerializeField] private float cameraPanSpeed = 9f;
+    [SerializeField] private float cameraTiltSpeed = 9f;
     [SerializeField] private float cameraTiltMin = -80f;
     [SerializeField] private float cameraTiltMax = 35f;
 
+    // Private variables
     private float cameraDistance = 0f;
     private float mouseWheel = 0f;
-    private float mouseX = 0f;
-    private float mouseY = 0f;
     
     private float cameraTilt = 0f;
     private float cameraPan = 0f;
-
-    private bool setFirstTimePlayerRotation = false;
-
-    //Todo update to the new Unity Input System
 
 
     private void Awake()
@@ -43,11 +47,13 @@ public class CameraController : MonoBehaviour
         }
 
         mainCamera.transform.parent = gameObject.transform;
+        mainCamera.transform.position = Vector3.zero;
+        mainCamera.transform.rotation = Quaternion.identity;
+        cameraDistance = cameraStartDistance;
     }
 
     void Start()
     {
-        // Todo create public property and set it from the character system / controller
         if (player == null)
         {
             if (GameObject.FindGameObjectWithTag("Player"))
@@ -55,55 +61,70 @@ public class CameraController : MonoBehaviour
             else
                 Debug.LogError("No Player with Tag Player found");
         }
-        
-        mainCamera.transform.position = Vector3.zero;
-        mainCamera.transform.rotation = Quaternion.identity;
 
-        gameObject.transform.rotation = player.transform.rotation;
-
-        cameraDistance = cameraStartDistance;
+        gameObject.transform.localRotation = player.transform.localRotation;
+        cameraPan = player.transform.localEulerAngles.y;
     }
 
 
     void Update()
     {
-        mouseX = Input.GetAxis("Mouse X") * mouseSensitivityX;
-        mouseY = Input.GetAxis("Mouse Y") * mouseSensitivityY;
-        mouseWheel = Input.GetAxis("Mouse ScrollWheel");
-
-        cameraDistance -= mouseWheel * mouseWheelSensitivity;
-        cameraDistance = Mathf.Clamp(cameraDistance, cameraMinDistance, cameraMaxDistance);
-
-
+        GetMouseInput();
+        HandleCameraDistance();
+        
         if (Input.GetMouseButton(0))
         {
-            cameraPan += mouseX;
-            cameraTilt += mouseY;
-
-            // Needed if Player Spawn Rotation Y is not 0 then
-            // first mouse left click turns the camera to (0,0,0) look direction
-            if (!setFirstTimePlayerRotation)
-            {
-                cameraPan = player.transform.localEulerAngles.y;
-                setFirstTimePlayerRotation = true;
-            }
-            
-            cameraTilt = Mathf.Clamp(cameraTilt, cameraTiltMin, cameraTiltMax);
-            transform.localEulerAngles = new Vector3(-cameraTilt, cameraPan, 0);
+            CameraTiltAndPan();
         }
 
         if (Input.GetMouseButton(1))
         {
-            cameraTilt += mouseY;
-            cameraTilt = Mathf.Clamp(cameraTilt, cameraTiltMin, cameraTiltMax);
-            transform.localEulerAngles = new Vector3(-cameraTilt, transform.localEulerAngles.y, 0);
+            CameraTilt();
         }
-
-        // Todo if the character rotates the camera should rotate with the character
     }
 
     private void LateUpdate()
     { 
         transform.position = player.transform.position + CameraOffset - transform.forward * cameraDistance;
+    }
+
+    private void GetMouseInput()
+    {
+        MouseX = Input.GetAxis("Mouse X");
+        MouseY = Input.GetAxis("Mouse Y") ;
+        mouseWheel = Input.GetAxis("Mouse ScrollWheel");
+    }
+
+    private void HandleCameraDistance()
+    {
+        cameraDistance -= mouseWheel * mouseWheelSensitivity;
+        cameraDistance = Mathf.Clamp(cameraDistance, cameraMinDistance, cameraMaxDistance);
+    }
+
+    private void CameraTiltAndPan()
+    {
+        cameraPan += MouseX * cameraPanSpeed;
+        cameraTilt += MouseY * cameraTiltSpeed;
+
+        transform.localEulerAngles = new Vector3(-ClampCameraTilt(cameraTilt), cameraPan, 0);
+    }
+
+    private void CameraTilt()
+    {
+        cameraTilt += MouseY * cameraTiltSpeed;
+
+        transform.localEulerAngles = new Vector3(-ClampCameraTilt(cameraTilt), transform.localEulerAngles.y, 0);
+    }
+
+    private void CameraPan()
+    {
+        cameraPan += MouseX * cameraPanSpeed;
+
+        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, cameraPan, 0);
+    }
+
+    private float ClampCameraTilt(float tilt)
+    {
+        return cameraTilt = Mathf.Clamp(cameraTilt, cameraTiltMin, cameraTiltMax);
     }
 }
