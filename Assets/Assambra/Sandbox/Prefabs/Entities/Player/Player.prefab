@@ -229,11 +229,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce594ea32abd693428c1764b2d33b308, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
-  runSpeedFactor: 0
-  rotationSpeed: 150
-  mouseRotateSpeedFactor: 2
-  mouseX: 0
+  cameraController: {fileID: 0}
+  movementSpeed: 2
+  runSpeedFactor: 2
+  keyRotationSpeed: 150
+  mouseRotationSpeed: 300
 --- !u!114 &-5383585634645454109
 MonoBehaviour:
   m_ObjectHideFlags: 0
