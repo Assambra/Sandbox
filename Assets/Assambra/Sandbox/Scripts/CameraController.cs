@@ -6,8 +6,6 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     [Header("Public")]
-    public float MouseX = 0f;
-    public float MouseY = 0f;
     public float cameraPan = 0f;
 
     public bool IsOverUIElement { set; get; }
@@ -31,12 +29,14 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float cameraTiltMin = -80f;
     [SerializeField] private float cameraTiltMax = 35f;
 
-    
+
 
     // Private variables
+    private float mouseX = 0f;
+    private float mouseY = 0f;
     private float cameraDistance = 0f;
     private float mouseWheel = 0f;
-    
+
     private float cameraTilt = 0f;
     
     private float lastCameraPan = 0f;
@@ -75,6 +75,7 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        CameraPanCorrection();
         lastCameraPan = cameraPan;
 
         GetMouseInput();
@@ -100,8 +101,8 @@ public class CameraController : MonoBehaviour
 
     private void GetMouseInput()
     {
-        MouseX = Input.GetAxis("Mouse X");
-        MouseY = Input.GetAxis("Mouse Y") ;
+        mouseX = Input.GetAxis("Mouse X");
+        mouseY = Input.GetAxis("Mouse Y") ;
         mouseWheel = Input.GetAxis("Mouse ScrollWheel");
     }
 
@@ -113,8 +114,8 @@ public class CameraController : MonoBehaviour
 
     private void CameraTiltAndPan()
     {
-        cameraPan += MouseX * cameraPanSpeed;
-        cameraTilt += MouseY * cameraTiltSpeed;
+        cameraPan += mouseX * cameraPanSpeed;
+        cameraTilt += mouseY * cameraTiltSpeed;
 
         transform.localEulerAngles = new Vector3(-ClampCameraTilt(cameraTilt), cameraPan, 0);
     }
@@ -122,5 +123,13 @@ public class CameraController : MonoBehaviour
     private float ClampCameraTilt(float tilt)
     {
         return cameraTilt = Mathf.Clamp(cameraTilt, cameraTiltMin, cameraTiltMax);
+    }
+
+    private void CameraPanCorrection()
+    {
+        if (cameraPan < -180)
+            cameraPan = 180;
+        if (cameraPan > 180)
+            cameraPan = -180; 
     }
 }
