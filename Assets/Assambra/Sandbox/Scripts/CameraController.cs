@@ -10,6 +10,8 @@ public class CameraController : MonoBehaviour
     public float MouseY = 0f;
     public float cameraPan = 0f;
 
+    public bool IsOverUIElement { set; get; }
+
     [Header("Serialize fields")]
     [SerializeField] private Camera mainCamera = null;
     [SerializeField] private Player player = null;
@@ -28,6 +30,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float cameraTiltSpeed = 9f;
     [SerializeField] private float cameraTiltMin = -80f;
     [SerializeField] private float cameraTiltMax = 35f;
+
+    
 
     // Private variables
     private float cameraDistance = 0f;
@@ -76,12 +80,12 @@ public class CameraController : MonoBehaviour
         GetMouseInput();
         HandleCameraDistance();
 
-        if (Input.GetMouseButton(0))
+        if (Input.GetMouseButton(0) && !IsOverUIElement)
         {
             CameraTiltAndPan();
         }
 
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && !IsOverUIElement)
         {
             CameraTiltAndPan();
             cameraPanDifference = lastCameraPan - cameraPan;
