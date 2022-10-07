@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -21,7 +18,10 @@ public class PlayerController : MonoBehaviour
     private float runSpeedFactor = 0f;
 
     private Vector3 movement = Vector3.zero;
-    private Vector3 mouseRotation = Vector3.zero;
+    
+
+    private float lastPlayerRotation = 0f;
+    private float playerRotationDifference = 0f;
 
 
     private void Awake()
@@ -34,26 +34,24 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        lastPlayerRotation = transform.localEulerAngles.y;
+
         GetAxisInput();
         HandleMoveSpeed();
 
-        //We want to rotated the character with mouse input if right mouse button pressed
+
         if (Input.GetMouseButton(1))
         {
-            mouseRotation.y = cameraController.MouseX * mouseRotationSpeed * Time.deltaTime;
-            // Rotate the Character with Mouse
-            transform.Rotate(new Vector3(0, mouseRotation.y, 0));
-
-            // Move the character
             transform.Translate(movement * movementSpeed * runSpeedFactor * Time.deltaTime);
         }
-        // rotate with Keys and block moving x
         else
         {
-            // Rotate the Character with keys
-            transform.Rotate(0, movement.x * keyRotationSpeed * Time.deltaTime, 0);
+            transform.localEulerAngles += new Vector3(0, movement.x * keyRotationSpeed * Time.deltaTime, 0);
+            cameraController.cameraPan += movement.x * keyRotationSpeed * Time.deltaTime;
             
-            // Move the character but dont move in x
+            playerRotationDifference = lastPlayerRotation - transform.localEulerAngles.y;
+            cameraController.transform.localEulerAngles -= new Vector3(0, playerRotationDifference);
+            
             transform.Translate(new Vector3(0, 0, movement.z) * movementSpeed * runSpeedFactor * Time.deltaTime);
         }
     }
@@ -65,7 +63,6 @@ public class PlayerController : MonoBehaviour
 
     private void HandleMoveSpeed()
     {
-        // while shift pressed increase the runspeed by this factor
         if (Input.GetKey(KeyCode.LeftShift))
             runSpeedFactor = 2.0f;
         else

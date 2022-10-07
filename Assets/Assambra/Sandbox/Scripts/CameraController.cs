@@ -8,6 +8,7 @@ public class CameraController : MonoBehaviour
     [Header("Public")]
     public float MouseX = 0f;
     public float MouseY = 0f;
+    public float cameraPan = 0f;
 
     [Header("Serialize fields")]
     [SerializeField] private Camera mainCamera = null;
@@ -33,8 +34,9 @@ public class CameraController : MonoBehaviour
     private float mouseWheel = 0f;
     
     private float cameraTilt = 0f;
-    private float cameraPan = 0f;
-
+    
+    private float lastCameraPan = 0f;
+    private float cameraPanDifference = 0f;
 
     private void Awake()
     {
@@ -69,9 +71,11 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
+        lastCameraPan = cameraPan;
+
         GetMouseInput();
         HandleCameraDistance();
-        
+
         if (Input.GetMouseButton(0))
         {
             CameraTiltAndPan();
@@ -79,12 +83,14 @@ public class CameraController : MonoBehaviour
 
         if (Input.GetMouseButton(1))
         {
-            CameraTilt();
+            CameraTiltAndPan();
+            cameraPanDifference = lastCameraPan - cameraPan;
+            player.transform.localEulerAngles -= new Vector3(0, cameraPanDifference);
         }
     }
 
     private void LateUpdate()
-    { 
+    {
         transform.position = player.transform.position + CameraOffset - transform.forward * cameraDistance;
     }
 
@@ -107,20 +113,6 @@ public class CameraController : MonoBehaviour
         cameraTilt += MouseY * cameraTiltSpeed;
 
         transform.localEulerAngles = new Vector3(-ClampCameraTilt(cameraTilt), cameraPan, 0);
-    }
-
-    private void CameraTilt()
-    {
-        cameraTilt += MouseY * cameraTiltSpeed;
-
-        transform.localEulerAngles = new Vector3(-ClampCameraTilt(cameraTilt), transform.localEulerAngles.y, 0);
-    }
-
-    private void CameraPan()
-    {
-        cameraPan += MouseX * cameraPanSpeed;
-
-        transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, cameraPan, 0);
     }
 
     private float ClampCameraTilt(float tilt)
